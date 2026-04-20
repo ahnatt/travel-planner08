@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>我的可愛旅伴 App</title>
+    <title>My Travel App</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -67,8 +67,8 @@
                 <i class="fa-solid fa-trash"></i>
             </button>
         </div>
-        <div class="absolute bottom-10 right-4 flex space-x-2 z-20 glass-tab p-2 rounded-2xl shadow-lg">
-            <button v-for="tab in tabs" :key="tab.id" @click="currentTab = tab.id" :class="['w-10 h-10 rounded-xl flex items-center justify-center transition-all', currentTab === tab.id ? 'bg-sky-500 text-white scale-110 shadow-md' : 'text-sky-600 hover:bg-sky-100']"><i :class="tab.icon"></i></button>
+        <div class="absolute bottom-10 right-4 flex space-x-2 z-20 glass-tab p-2 rounded-2xl shadow-lg overflow-x-auto hide-scrollbar max-w-[90%]">
+            <button v-for="tab in tabs" :key="tab.id" @click="currentTab = tab.id" :class="['w-10 h-10 flex-shrink-0 rounded-xl flex items-center justify-center transition-all', currentTab === tab.id ? 'bg-sky-500 text-white scale-110 shadow-md' : 'text-sky-600 hover:bg-sky-100']"><i :class="tab.icon"></i></button>
         </div>
     </div>
 
@@ -173,12 +173,10 @@
                     <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-sky-800"><i class="fa-solid fa-plane-departure"></i> 航班資訊</h3><button @click="openInfoModal('flights')" class="text-sky-500 text-sm bg-sky-50 px-2 py-1 rounded"><i class="fa-solid fa-plus"></i> 新增</button></div>
                     <div v-for="item in travelInfo.flights" :key="item.id" class="mb-4 bg-slate-50 p-4 rounded-xl relative border-l-4" :class="item.type==='去程' ? 'border-blue-400' : 'border-orange-400'">
                         <div class="absolute top-2 right-2 space-x-3 text-sm"><button @click="openInfoModal('flights', item)" class="text-sky-500"><i class="fa-solid fa-pen"></i></button><button @click="deleteInfo('flights', item.id)" class="text-red-400"><i class="fa-solid fa-trash"></i></button></div>
-                        
                         <div class="flex items-center mb-2">
                             <span class="text-[10px] font-bold text-white px-2 py-1 rounded mr-2" :class="item.type==='去程' ? 'bg-blue-400' : 'bg-orange-400'">{{ item.type }}</span>
                             <span v-if="item.depDate" class="text-xs font-bold text-gray-500"><i class="fa-regular fa-calendar-days mr-1"></i> {{ item.depDate }}</span>
                         </div>
-                        
                         <div class="flex justify-between items-center mt-3">
                             <div class="text-center w-1/3"><p class="text-xl font-black text-gray-800">{{ item.depTime }}</p><p class="text-xs text-gray-500 mt-1 font-bold">{{ item.depAirport }}</p></div>
                             <div class="flex flex-col items-center w-1/3"><span class="text-[10px] text-gray-400 mb-1">{{ item.duration }}</span><div class="w-full relative flex items-center justify-center"><div class="border-t-2 border-dashed border-gray-300 w-full absolute"></div><i class="fa-solid fa-plane text-sky-400 bg-slate-50 px-1 z-10"></i></div></div>
@@ -194,12 +192,10 @@
                     <div v-for="item in travelInfo.hotels" :key="item.id" class="mb-3 bg-purple-50 p-4 rounded-xl relative">
                         <div class="absolute top-3 right-3 space-x-3 text-sm"><button @click="openInfoModal('hotels', item)" class="text-purple-500"><i class="fa-solid fa-pen"></i></button><button @click="deleteInfo('hotels', item.id)" class="text-red-400"><i class="fa-solid fa-trash"></i></button></div>
                         <p class="font-bold text-gray-800 text-lg mb-1 pr-10">{{ item.name }}</p>
-                        
                         <div class="mb-2 space-x-2">
                             <span class="text-xs text-purple-600 font-bold bg-purple-100 inline-block px-2 py-1 rounded">入住: {{ item.checkIn }}</span>
                             <span v-if="item.checkOut" class="text-xs text-purple-600 font-bold bg-purple-100 inline-block px-2 py-1 rounded">退房: {{ item.checkOut }}</span>
                         </div>
-                        
                         <p class="text-sm text-gray-600"><i class="fa-solid fa-phone w-4 text-purple-300"></i> {{ item.phone }}</p>
                         <a v-if="item.website" :href="item.website.startsWith('http') ? item.website : 'https://' + item.website" target="_blank" class="text-sm text-purple-500 mt-1 flex items-start hover:underline"><i class="fa-solid fa-globe w-4 mt-1"></i> <span class="flex-1">酒店網頁</span></a>
                         <a v-if="item.address" :href="`https://maps.google.com/?q=${item.address}`" target="_blank" class="text-sm text-sky-500 mt-1 flex items-start"><i class="fa-solid fa-location-dot w-4 mt-1"></i> <span class="flex-1">{{ item.address }}</span></a>
@@ -214,6 +210,39 @@
                         <a v-if="item.address" :href="`https://maps.google.com/?q=${item.address}`" target="_blank" class="text-sm text-sky-500 flex items-start bg-white p-2 rounded-lg shadow-sm"><i class="fa-solid fa-location-dot w-4 mt-1 text-green-400"></i> <span class="flex-1">取車導航：{{ item.address }}</span></a>
                     </div>
                 </div>
+            </div>
+
+            <div v-else-if="currentTab === 'references'" key="references" class="pb-20">
+                <div class="flex justify-between items-center mb-4 px-1">
+                    <h3 class="font-bold text-sky-800 text-lg">參考資料庫</h3>
+                </div>
+                
+                <div v-if="references.length === 0" class="text-center text-gray-400 py-10">
+                    <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                    <p class="text-sm">尚無參考資料<br>點擊右下角按鈕開始收集吧！</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div v-for="(refItem, index) in references" :key="refItem.id" class="bg-white rounded-2xl p-4 shadow-soft border-l-4" :class="getCategoryColor(refItem.category)">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-xs font-bold px-2 py-1 rounded bg-gray-100 text-gray-600">{{ refItem.category }}</span>
+                                <h3 class="font-bold text-lg text-gray-800 mt-1">{{ refItem.name }}</h3>
+                            </div>
+                            <div class="flex space-x-3 text-gray-400">
+                                <button @click="openReferenceModal(refItem, index)"><i class="fa-solid fa-pen hover:text-sky-500"></i></button>
+                                <button @click="deleteReference(index)"><i class="fa-solid fa-trash hover:text-red-500"></i></button>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500 space-y-1 mt-2">
+                            <p v-if="refItem.address" class="text-sky-500"><a :href="`https://maps.google.com/?q=${refItem.address}`" target="_blank"><i class="fa-solid fa-location-dot w-5 text-center"></i> {{ refItem.address }}</a></p>
+                            <p v-if="refItem.url" class="text-sky-500"><a :href="refItem.url.startsWith('http') ? refItem.url : 'https://'+refItem.url" target="_blank"><i class="fa-solid fa-globe w-5 text-center"></i> 相關網頁</a></p>
+                            <p v-if="refItem.cost"><i class="fa-solid fa-money-bill w-5 text-center"></i> {{ refItem.cost }} {{ refItem.currency }}</p>
+                            <p v-if="refItem.remarks" class="bg-sky-50 p-2 rounded-lg mt-2 text-xs text-sky-800 break-words">{{ refItem.remarks }}</p>
+                        </div>
+                    </div>
+                </div>
+                <button @click="openReferenceModal()" class="fixed bottom-6 right-6 w-14 h-14 bg-sky-500 text-white rounded-full shadow-lg text-2xl flex items-center justify-center z-40 hover:scale-110 transition"><i class="fa-solid fa-plus"></i></button>
             </div>
 
             <div v-else-if="currentTab === 'shopping'" key="shopping" class="pb-20">
@@ -245,7 +274,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Firebase 配置
     const firebaseConfig = {
         apiKey: "AIzaSyB-hmH27bFuAXxIuAMw_bGnSLnHVSQMBRs",
         authDomain: "my-trip-planner-b1af3.firebaseapp.com",
@@ -292,7 +320,16 @@
             const settings = ref({ destination: '', startDate: '', endDate: '', currency: 'USD', rate: 1, lang: 'en', police: '112', bannerUrl: '', weather: {temp: '22', icon: '⛅'} });
             const currentTab = ref('itinerary');
             
-            const tabs = [ { id: 'checklist', icon: 'fa-solid fa-list-check' }, { id: 'translate', icon: 'fa-brands fa-google' }, { id: 'itinerary', icon: 'fa-solid fa-map-location-dot' }, { id: 'info', icon: 'fa-solid fa-circle-info' }, { id: 'shopping', icon: 'fa-solid fa-basket-shopping' }, { id: 'expense', icon: 'fa-solid fa-sack-dollar' } ];
+            // ★ 新增 references tab
+            const tabs = [ 
+                { id: 'checklist', icon: 'fa-solid fa-list-check' }, 
+                { id: 'translate', icon: 'fa-brands fa-google' }, 
+                { id: 'itinerary', icon: 'fa-solid fa-map-location-dot' }, 
+                { id: 'info', icon: 'fa-solid fa-circle-info' }, 
+                { id: 'references', icon: 'fa-solid fa-bookmark' }, // 新加入的參考資料按鈕
+                { id: 'shopping', icon: 'fa-solid fa-basket-shopping' }, 
+                { id: 'expense', icon: 'fa-solid fa-sack-dollar' } 
+            ];
 
             const checklist = ref([]);
             const defaultChecklist = [
@@ -309,6 +346,9 @@
             const shoppingList = ref([]);
             const shopCategories = ref(['日用品', '手信', '藥妝', '服裝']);
             const expenses = ref([]); const companions = ref(['我']); const calcAmount = ref(0);
+            
+            // ★ 新增參考資料狀態陣列
+            const references = ref([]);
 
             // ================= 1. Firebase 讀取邏輯 =================
             onMounted(() => {
@@ -326,7 +366,6 @@
                             checklist.value = savedChecklist;
                         }
                         
-                        // 【修復 1：讀取時安全轉換】將 Firebase 的安全格式換回原本的陣列格式
                         if (data.itinerary) {
                             itinerary.value = data.itinerary.map(dayObj => dayObj.spots || []);
                         } else {
@@ -339,6 +378,9 @@
                         expenses.value = data.expenses || [];
                         companions.value = data.companions || ["我"];
                         
+                        // 讀取參考資料
+                        references.value = data.references || [];
+                        
                         generateTripDays();
                         setTimeout(() => { isInitialLoading = false; }, 500); 
                     } else {
@@ -350,10 +392,10 @@
             });
 
             // ================= 2. Firebase 寫入邏輯 =================
-            watch([settings, checklist, itinerary, travelInfo, shoppingList, shopCategories, expenses, companions], async () => {
+            // 監聽 references 以自動上傳
+            watch([settings, checklist, itinerary, travelInfo, shoppingList, shopCategories, expenses, companions, references], async () => {
                 if (isInitialLoading) return;
                 
-                // 【修復 2：寫入時安全轉換】將 itinerary (陣列包陣列) 轉換為 Firebase 接受的格式 (陣列包物件)
                 const safeItinerary = itinerary.value.map(dayArray => {
                     return { spots: dayArray }; 
                 });
@@ -361,12 +403,13 @@
                 await setDoc(tripDocRef, {
                     settings: settings.value,
                     checklist: checklist.value,
-                    itinerary: safeItinerary, // 使用轉換後的安全格式上傳
+                    itinerary: safeItinerary,
                     travelInfo: travelInfo.value,
                     shoppingList: shoppingList.value,
                     shopCategories: shopCategories.value,
                     expenses: expenses.value,
                     companions: companions.value,
+                    references: references.value, // 上傳參考資料
                     lastUpdated: new Date().getTime()
                 }, { merge: true });
             }, { deep: true });
@@ -474,6 +517,50 @@
             };
             const editItinerary = (item, idx) => openItineraryModal(item, idx);
             
+            // ★ 新增參考資料邏輯
+            const openReferenceModal = async (editItem=null, idx=-1) => {
+                const html = `
+                    <select id="r-cat" class="w-full mb-2 p-2 border rounded">
+                        <option ${editItem?.category=='行程'?'selected':''}>行程</option>
+                        <option ${editItem?.category=='交通'?'selected':''}>交通</option>
+                        <option ${editItem?.category=='美食'?'selected':''}>美食</option>
+                        <option ${editItem?.category=='其他'?'selected':''}>其他</option>
+                    </select>
+                    <input id="r-name" class="w-full mb-2 p-2 border rounded" placeholder="名稱" value="${editItem?.name||''}">
+                    <input id="r-url" class="w-full mb-2 p-2 border rounded" placeholder="網址 (選填)" value="${editItem?.url||''}">
+                    <input id="r-address" class="w-full mb-2 p-2 border rounded" placeholder="地點 (選填)" value="${editItem?.address||''}">
+                    <div class="flex space-x-2 mb-2">
+                        <input id="r-cost" type="number" class="w-2/3 p-2 border rounded" placeholder="費用 (選填)" value="${editItem?.cost||''}">
+                        <select id="r-currency" class="w-1/3 p-2 border rounded">
+                            <option value="${settings.value.currency}" ${editItem?.currency==settings.value.currency?'selected':''}>${settings.value.currency}</option>
+                            <option value="HKD" ${editItem?.currency=='HKD'?'selected':''}>HKD</option>
+                        </select>
+                    </div>
+                    <textarea id="r-remarks" class="w-full mb-2 p-2 border rounded" placeholder="備註 (選填)">${editItem?.remarks||''}</textarea>
+                `;
+                const r = await Swal.fire({ title:editItem?'編輯參考資料':'新增參考資料', html, showCancelButton:true, confirmButtonColor: '#0ea5e9' });
+                
+                if(r.isConfirmed){ 
+                    const d = {
+                        id: editItem?.id || Date.now(), 
+                        category: document.getElementById('r-cat').value, 
+                        name: document.getElementById('r-name').value, 
+                        url: document.getElementById('r-url').value, 
+                        address: document.getElementById('r-address').value, 
+                        cost: document.getElementById('r-cost').value,
+                        currency: document.getElementById('r-currency').value,
+                        remarks: document.getElementById('r-remarks').value
+                    }; 
+                    if(editItem) references.value[idx] = d; 
+                    else references.value.push(d); 
+                }
+            };
+
+            const deleteReference = async (idx) => {
+                const r = await Swal.fire({ title: '確定要刪除嗎？', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: '刪除' });
+                if(r.isConfirmed) { references.value.splice(idx, 1); }
+            };
+
             const groupedShopping = computed(() => { const groups = {}; shopCategories.value.forEach(cat => groups[cat] = []); shoppingList.value.forEach(item => { if(!groups[item.category]) groups[item.category] = []; groups[item.category].push(item); }); return groups; });
             const manageCategories = async () => { const { value: cats } = await Swal.fire({ title: '編輯分類', input: 'textarea', inputValue: shopCategories.value.join('\n'), text: '每行輸入一個分類名稱', confirmButtonColor: '#0ea5e9' }); if(cats) shopCategories.value = cats.split('\n').map(c=>c.trim()).filter(c=>c); };
             
@@ -503,17 +590,19 @@
             };
             const deleteExpense = (id) => expenses.value = expenses.value.filter(e => e.id !== id);
             
-            const getCategoryColor = (type) => ({'景點':'border-green-400','住宿':'border-purple-400','美食':'border-orange-400','購物':'border-pink-400','其他':'border-gray-400'})[type]||'border-sky-400';
+            // 更新類別顏色：加入「行程」與「交通」的色彩
+            const getCategoryColor = (type) => ({'景點':'border-green-400','住宿':'border-purple-400','美食':'border-orange-400','購物':'border-pink-400','其他':'border-gray-400','行程':'border-blue-400','交通':'border-yellow-400'})[type]||'border-sky-400';
             const getTransitIcon = (t) => t==='開車'?'fa-solid fa-car':t==='大眾運輸'?'fa-solid fa-train-subway':'fa-solid fa-person-walking';
             const getExpenseIcon = (cat) => `fa-solid ${{'交通':'fa-car','飲食':'fa-utensils','住宿':'fa-bed','門票':'fa-ticket','購物':'fa-bag-shopping','其他':'fa-box'}[cat] || 'fa-coins'}`;
 
             return {
-                showWizard, wizard, settings, currentTab, tabs, checklist, itinerary, activeDay, tripDays, travelInfo, shoppingList, expenses, companions, calcAmount,
+                showWizard, wizard, settings, currentTab, tabs, checklist, itinerary, activeDay, tripDays, travelInfo, shoppingList, expenses, companions, calcAmount, references,
                 openWizard, finishWizard, uploadBanner, deleteBanner, checkAll, uncheckAll, openChecklistModal, deleteChecklistItem,
                 openInfoModal, deleteInfo,
                 getCategoryColor, getTransitIcon, openItineraryModal, editItinerary, calcHKD, previewImg,
                 groupedShopping, manageCategories, openShoppingModal, deleteShopping,
-                groupedExpenses, totalExpenseHKD, debts, editCompanions, getExpenseIcon, openExpenseModal, deleteExpense
+                groupedExpenses, totalExpenseHKD, debts, editCompanions, getExpenseIcon, openExpenseModal, deleteExpense,
+                openReferenceModal, deleteReference
             };
         }
     }).mount('#app');
